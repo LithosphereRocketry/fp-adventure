@@ -45,13 +45,21 @@ struct fp fp_unpack(float f) {
     struct fp u;
     uint32_t f_bits = *(uint32_t*) &f;
     u.sign = (f_bits & (1<<31)) != 0;
-    u.exp = (f_bits >> 23) - 127;
-    u.mnt = (f_bits & ((1<<23)-1)) | (1 << 23);
+    if((f_bits >> 23) & 0xFF) {
+        u.exp = (f_bits >> 23) - 127;
+        u.mnt = (f_bits & ((1<<23)-1)) | (1 << 23);
+    } else {
+        // subnormal or 0
+        u.exp = -126;
+        u.mnt = (f_bits & ((1<<23)-1));
+    }
     return u;
 }
 
 float fp_pack(struct fp f) {
-    uint32_t f_bits = (f.sign ? 1<<31 : 0) | ((f.exp+127) & 0xFF) << 23 | (f.mnt & ((1 << 23) - 1));
+    uint32_t f_bits = f.mnt & (1 << 23) ? 
+          (f.sign ? 1<<31 : 0) | ((f.exp+127) & 0xFF) << 23 | (f.mnt & ((1 << 23) - 1)) // normal
+        : (f.sign ? 1<<31 : 0) | (f.mnt & ((1 << 23) - 1)); // subnormal
     return *(float*) &f_bits;
 }
 
@@ -116,16 +124,18 @@ float fp_add(float fa, float fb) {
 
     if(offs < -24 /* mant zero */ || a.exp + offs <= -127 /* exp underflow */) {
 #ifdef FP_VERBOSE
-        printf("rounds to zero\n");
+        printf("rounds to zero or subnormal\n");
 #endif
-        res.exp = -127; // becomes zero
-        res.mnt = 0;
+        res.exp = -127; // subnormal
+        // compute "offs" based on a.exp and the implied subnorm exponent -126
+        // and then align the mantissa as if that were the offset
+        res.mnt = q_pre_mant >> (24 + (-126 - a.exp));
     } else if(a.exp + offs > 127) {
 #ifdef FP_VERBOSE
         printf("rounds to infinity\n");
 #endif
         res.exp = -128; // infinity
-        res.mnt = 0;
+        res.mnt = (1 << 23);
     } else {
         res.exp = a.exp + offs;
         res.mnt = q_pre_mant >> (24 + offs);

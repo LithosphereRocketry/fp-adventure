@@ -1,7 +1,7 @@
 #ifndef FP_H
 #define FP_H
 
-#define FP_VERBOSE
+// #define FP_VERBOSE
 
 enum float_type {
     FP_NORMAL,

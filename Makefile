@@ -12,12 +12,17 @@ OBJDIR = obj/
 COPTS = -O2
 
 # if you just type "make", this happens
-.DEFAULT_GOAL: all
+.DEFAULT_GOAL=default
 # these rules don't refer to real files, so they shouldn't get timestamp-checked
-.PHONY: all clean
+.PHONY: all clean test default
+
+default: all test
 
 # make all = make (all of the final targets given)
 all: $(TARGETS)
+
+test: unit_tests
+	./$<
 
 # includes = everything in INCDIR with a .h file extension
 INC = $(wildcard $(INCDIR)*.h)

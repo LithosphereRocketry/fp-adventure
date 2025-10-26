@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
         uint32_t g_bits = rand() << 31 | rand();
         float f = *(float*) &f_bits, g = *(float*) &g_bits;
         // Not dealing with complicated stuff for now
-        if(fp_classify(f) != FP_NORMAL || fp_classify(g) != FP_NORMAL) continue;
+        if(fp_classify(f) == FP_NAN || fp_classify(g) == FP_NAN) continue;
 #ifdef FP_VERBOSE
         printf("=====\n");
 #endif
