@@ -1,3 +1,11 @@
+main
+add_fuzz
+sub_fuzz
+add_tests
+unit_tests
+
+.vscode
+
 # Prerequisites
 *.d
 
