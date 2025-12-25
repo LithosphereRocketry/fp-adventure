@@ -9,7 +9,7 @@ SRCDIR = src/
 # Generated object files go here
 OBJDIR = obj/
 
-COPTS = -O2
+COPTS = -O2 -flto -march=native
 
 # if you just type "make", this happens
 .DEFAULT_GOAL=default

@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
         test_add(f_bits, g_bits);
 
         count++;
-        if(count % 1000000 == 0) {
+        if(count % 10000000 == 0) {
             printf("%zu iterations\n", count);
         }
 #ifdef ONESHOT

@@ -34,4 +34,10 @@ int main(int argc, char** argv) {
 
     // inf (7f800000) - 8.92134e+32 (762ff13d)
     // Expected inf (7f800000), got -8.92134e+32 (f62ff13d)
+
+    // trivial multiply (1 * 1)
+    test_mul(0x3f800000, 0x3f800000);
+
+    // simple multiply (3 * 5)
+    test_mul(0x40400000, 0x40a00000);
 }

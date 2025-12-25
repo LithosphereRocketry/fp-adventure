@@ -183,3 +183,35 @@ float fp_add(float fa, float fb) {
 float fp_sub(float fa, float fb) {
     return fp_add(fa, fp_minus(fb));
 }
+
+float fp_mul(float fa, float fb) {
+    struct fp a = fp_unpack(fa);
+    struct fp b = fp_unpack(fb);
+
+#ifdef FP_VERBOSE
+    fp_print(a);
+    printf("\t|\t%08x\n", *(uint32_t*) &fa);
+    fp_print(b);
+    printf("\t|\t%08x\n", *(uint32_t*) &fb);
+#endif
+    uint64_t q_pre_mnt = (uint64_t) a.mnt * (uint64_t) b.mnt;
+    int16_t q_pre_exp = (int16_t) a.exp + (int16_t) b.exp;
+
+#ifdef FP_VERBOSE
+    printf("Initial mantissa %lx\n", q_pre_mnt);
+    printf("Initial exponent %hd\n", q_pre_exp);
+#endif
+
+    int32_t shift_amt = trailing_set_bits(q_pre_mnt) - 24;
+    uint64_t aligned_mnt = shift_amt > 0 ? q_pre_mnt >> shift_amt : q_pre_mnt << -shift_amt;
+    int16_t aligned_exp = q_pre_exp + shift_amt - 23;
+
+#ifdef FP_VERBOSE
+    printf("Shift by %d\n", shift_amt);
+    printf("New mantissa %lx\n", aligned_mnt);
+#endif
+
+
+
+    return 0;
+}
